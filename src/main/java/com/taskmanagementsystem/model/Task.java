@@ -2,6 +2,7 @@ package com.taskmanagementsystem.model;
 
 import com.taskmanagementsystem.model.enums.Priority;
 import com.taskmanagementsystem.model.enums.Status;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -12,6 +13,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -26,17 +30,27 @@ public class Task {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Min(10)
+    @Max(20)
+    @Column
     private String title;
 
+    @Min(0)
+    @Column
     private String description;
 
-    private LocalDate createdDate;
+    @Column
+    private LocalDate createdDate =LocalDate.now();
 
+    @FutureOrPresent
+    @Column
     private LocalDate deadline;
 
+    @Column
     @Enumerated(EnumType.STRING)
     private Status status;
 
+    @Column
     @Enumerated(EnumType.STRING)
     private Priority priority;
 

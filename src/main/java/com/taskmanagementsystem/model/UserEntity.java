@@ -10,6 +10,9 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import lombok.Data;
 
 import java.util.List;
@@ -23,12 +26,17 @@ public class UserEntity {
     private Long id;
 
     @Column(nullable = false)
+    @Min(10)
+    @Max(20)
     private String username;
 
     @Column(unique = true)
+    @Email
     private String email;
 
     @Column(nullable = false)
+    @Min(7)
+    @Max(15)
     private String password;
 
     @Column(nullable = false)

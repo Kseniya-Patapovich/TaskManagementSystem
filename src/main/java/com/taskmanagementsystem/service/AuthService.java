@@ -6,6 +6,7 @@ import com.taskmanagementsystem.exception.UserNotFoundException;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.model.dto.LoginDto;
 import com.taskmanagementsystem.model.dto.UserCreateDto;
+import com.taskmanagementsystem.model.enums.Role;
 import com.taskmanagementsystem.repository.UserRepository;
 import com.taskmanagementsystem.security.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -37,7 +38,7 @@ public class AuthService {
         createdUser.setUsername(userCreateDto.getUsername());
         createdUser.setEmail(userCreateDto.getEmail());
         createdUser.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
-        createdUser.setRole(userCreateDto.getRole());
+        createdUser.setRole(Role.USER);
         userRepository.save(createdUser);
     }
 

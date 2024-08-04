@@ -40,6 +40,7 @@ public class SecurityConfig {
                 .requestMatchers(new AntPathRequestMatcher("/swagger-ui/**"))
         );
     }
+
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
@@ -62,17 +63,17 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers(HttpMethod.GET, "/users/**").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.GET, "/users").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.DELETE, "/users").hasRole(Role.ADMIN.name())
-                        .requestMatchers(HttpMethod.PUT, "/users/**").hasRole(Role.USER.name())
-                        .requestMatchers(HttpMethod.POST, "/tasks").hasRole(Role.USER.name())
-                        .requestMatchers(HttpMethod.PUT, "/tasks").hasRole(Role.USER.name())
-                        .requestMatchers(HttpMethod.PUT, "/tasks/**").hasRole(Role.USER.name())
-                        .requestMatchers(HttpMethod.DELETE, "/tasks/**").hasRole(Role.USER.name())
-                        .requestMatchers(HttpMethod.GET, "/comments").hasRole(Role.USER.name())
-                        .requestMatchers(HttpMethod.POST, "/comments").hasRole(Role.USER.name())
-                        .requestMatchers(HttpMethod.PUT, "/comments").hasRole(Role.USER.name())
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.GET, "/users").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.DELETE, "/users").hasAuthority(Role.ADMIN.name())
+                        .requestMatchers(HttpMethod.PUT, "/users/**").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.POST, "/tasks").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.PUT, "/tasks").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.PUT, "/tasks/**").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.DELETE, "/tasks/**").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.GET, "/comments").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.POST, "/comments").hasAuthority(Role.USER.name())
+                        .requestMatchers(HttpMethod.PUT, "/comments").hasAuthority(Role.USER.name())
                         .requestMatchers(HttpMethod.DELETE, "/comments").permitAll()
                         .requestMatchers(HttpMethod.GET, "/tasks").permitAll()
                         .requestMatchers(HttpMethod.GET, "/tasks/**").permitAll()

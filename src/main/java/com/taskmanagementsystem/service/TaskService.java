@@ -29,6 +29,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final UserUtils userUtils;
     private final UserRepository userRepository;
+    private final UserService userService;
 
     public List<Task> getAllTasks(Pageable paging) {
         Page<Task> page = taskRepository.findAll(paging);
@@ -63,19 +64,22 @@ public class TaskService {
     public Long createTask(TaskCreateDto taskCreateDto) {
         Task task = new Task();
         CustomUserDetail userDetail = userUtils.getCurrentUser();
-        UserEntity author = userRepository.findById(userDetail.getId()).orElseThrow(() -> new UserNotFoundException(userDetail.getId()));
-        UserEntity assignee = userRepository.findById(taskCreateDto.getAssignee_id()).orElseThrow(() -> new UserNotFoundException(taskCreateDto.getAssignee_id()));
+        if (!userRepository.existsById(userDetail.getId())){
+            throw new UserNotFoundException(userDetail.getId());
+        }
+        if (!userRepository.existsById(taskCreateDto.getAssigneeId())){
+            throw new UserNotFoundException(taskCreateDto.getAssigneeId());
+        }
         if (taskCreateDto.getDeadline().isBefore(LocalDate.now())){
             throw new WarningDeadlineException(taskCreateDto.getDeadline());
         }
         task.setTitle(taskCreateDto.getTitle());
         task.setDescription(taskCreateDto.getDescription());
-        task.setCreatedDate(LocalDate.now());
         task.setDeadline(taskCreateDto.getDeadline());
         task.setPriority(taskCreateDto.getPriority());
         task.setStatus(Status.PENDING);
-        task.setAuthor(author);
-        task.setAssignee(assignee);
+        task.setAuthor(userService.getUserById(userDetail.getId()));
+        task.setAssignee(userService.getUserById(taskCreateDto.getAssigneeId()));
         taskRepository.save(task);
         return task.getId();
     }
@@ -85,7 +89,7 @@ public class TaskService {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
         UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (task.getAuthor() != null && task.getAuthor().equals(userRepository.findByEmail(currentUserEmail))) {
+        if (task.getAuthor() != null && task.getAuthor().equals(userRepository.findByEmail(currentUserEmail).get())) {
             task.setAssignee(user);
             taskRepository.save(task);
         } else {

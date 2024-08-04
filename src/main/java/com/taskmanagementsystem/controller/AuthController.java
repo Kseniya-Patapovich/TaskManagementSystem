@@ -3,6 +3,7 @@ package com.taskmanagementsystem.controller;
 import com.taskmanagementsystem.model.dto.LoginDto;
 import com.taskmanagementsystem.model.dto.UserCreateDto;
 import com.taskmanagementsystem.service.AuthService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -19,7 +20,7 @@ public class AuthController {
 
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registration(@RequestBody UserCreateDto userCreateDto) {
+    public void registration(@RequestBody @Valid UserCreateDto userCreateDto) {
         authService.registration(userCreateDto);
     }
 
