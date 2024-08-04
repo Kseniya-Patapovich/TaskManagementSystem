@@ -22,7 +22,7 @@ import java.util.List;
 public class UserController {
     private final UserService userService;
 
-    @PostMapping("/registration")
+    /*@PostMapping("/registration")
     public void registration(@RequestBody UserCreateDto userCreateDto) {
         userService.registration(userCreateDto);
     }
@@ -35,7 +35,7 @@ public class UserController {
     @PostMapping("/logout")
     public void logout() {
         userService.logout();
-    }
+    }*/
 
     @GetMapping
     public List<UserEntity> getAllUsers() {
@@ -52,7 +52,7 @@ public class UserController {
         return userService.getUserByEmail(email);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/password/{id}")
     public void updatePassword(@PathVariable Long id, @RequestBody String password) {
         userService.updatePassword(id, password);
     }
