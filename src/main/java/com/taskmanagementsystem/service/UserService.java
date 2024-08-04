@@ -23,32 +23,6 @@ import java.util.List;
 public class UserService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
-    /*private final JwtUtils jwtUtils;
-    private final AuthenticationManager authenticationManager;*/
-/*
-    @Transactional
-    public void registration(UserCreateDto userCreateDto) {
-        Optional<UserEntity> user = userRepository.findByEmail(userCreateDto.getEmail());
-        if (user.isPresent()) {
-            throw new SameUserInDb(userCreateDto.getEmail());
-        }
-        UserEntity createdUser = new UserEntity();
-        createdUser.setUsername(userCreateDto.getUsername());
-        createdUser.setEmail(userCreateDto.getEmail());
-        createdUser.setPassword(passwordEncoder.encode(userCreateDto.getPassword()));
-        createdUser.setRole(userCreateDto.getRole());
-        userRepository.save(createdUser);
-    }
-
-    public String login(String email, String password) {
-        Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(email, password));
-        SecurityContextHolder.getContext().setAuthentication(auth);
-        return jwtUtils.generateJwtToken(email);
-    }
-
-    public void logout() {
-        SecurityContextHolder.clearContext();
-    }*/
 
     public List<UserEntity> getAllUsers() {
         return userRepository.findAll();
