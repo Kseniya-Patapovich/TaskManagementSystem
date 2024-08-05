@@ -2,8 +2,14 @@ package com.taskmanagementsystem.controller;
 
 import com.taskmanagementsystem.model.Comment;
 import com.taskmanagementsystem.service.CommentService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -11,6 +17,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -18,26 +25,65 @@ import java.util.List;
 @RestController
 @RequestMapping("/comments")
 @RequiredArgsConstructor
+@Tag(name = "Comments", description = "API for managing comments on tasks")
 public class CommentController {
     private final CommentService commentService;
 
     @GetMapping
-    public List<Comment> getCommentByTaskId(@RequestParam long taskId, @RequestParam int page, @RequestParam int limit) {
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get comments by task ID", description = "Returns a paginated list of comments for a specified task.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Successful response"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Task not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public List<Comment> getCommentByTaskId(
+            @RequestParam @Parameter(description = "Task ID", required = true) long taskId,
+            @RequestParam @Parameter(description = "Page number", example = "0", required = true) int page,
+            @RequestParam @Parameter(description = "Number of comments per page", example = "10", required = true) int limit) {
         return commentService.getCommentsByTaskId(taskId, PageRequest.of(page, limit));
     }
 
     @PostMapping
-    public Long addComment(@RequestParam long taskId, @RequestBody String content) {
+    @ResponseStatus(HttpStatus.CREATED)
+    @Operation(summary = "Add a comment to a task", description = "Adds a new comment to the specified task.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Comment successfully created"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Task not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public Long addComment(
+            @RequestParam @Parameter(description = "Task ID", required = true) long taskId,
+            @RequestBody @Parameter(description = "Content of the comment", required = true) String content) {
         return commentService.addComment(taskId, content);
     }
 
     @PutMapping
-    public void changeComment(@RequestParam long id, @RequestBody String content) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Update a comment", description = "Updates the content of an existing comment.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Comment successfully updated"),
+            @ApiResponse(responseCode = "400", description = "Invalid request"),
+            @ApiResponse(responseCode = "404", description = "Comment not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public void changeComment(
+            @RequestParam @Parameter(description = "Comment ID", required = true) long id,
+            @RequestBody @Parameter(description = "Updated content of the comment", required = true) String content) {
         commentService.changeComment(id, content);
     }
 
     @DeleteMapping
-    public void deleteComment(@RequestParam long id) {
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @Operation(summary = "Delete a comment", description = "Deletes a comment by its ID.")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Comment successfully deleted"),
+            @ApiResponse(responseCode = "404", description = "Comment not found"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
+    public void deleteComment(@RequestParam @Parameter(description = "Comment ID", required = true) long id) {
         commentService.deleteComment(id);
     }
 }
