@@ -1,22 +1,22 @@
 package com.taskmanagementsystem.model.dto;
 
-import com.taskmanagementsystem.model.enums.Role;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 @Data
+@Schema(description = "Data for create new user")
 public class UserCreateDto {
-    @Min(10)
-    @Max(20)
+    @Size(min = 7, max = 15)
+    @Schema(description = "The username must contain from 7 to 15 characters")
     private String username;
 
     @Email
+    @Schema(description = "Email", example = "junior@example.com")
     private String email;
 
-    @Min(7)
-    @Max(15)
+    @Size(min = 8, max = 32)
+    @Schema(description = "The password must contain from 8 to 32 characters")
     private String password;
-    //private Role role;
 }

@@ -12,8 +12,6 @@ public interface TaskRepository extends JpaRepository<Task, Long> {
     Optional<Task> findByTitle(String title);
     boolean existsById(Long id);
     Page<Task> findAll(Pageable paging);
-    List<Task> findByAssignee_Id(Long assigneeId);
-
     Page<Task> findByAuthor_Id(Long id, Pageable paging);
-    Page<Task> findByAssignee_Id(Long id, Pageable paging);
+    Page<Task> findByAssignees_Id(Long id, Pageable paging);
 }
