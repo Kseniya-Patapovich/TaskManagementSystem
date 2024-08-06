@@ -1,8 +1,6 @@
 package com.taskmanagementsystem.service;
 
-import com.taskmanagementsystem.exception.CustomJwtException;
 import com.taskmanagementsystem.exception.SameUserInDb;
-import com.taskmanagementsystem.exception.UserNotFoundException;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.model.dto.LoginDto;
 import com.taskmanagementsystem.model.dto.UserCreateDto;
@@ -45,12 +43,7 @@ public class AuthService {
     public String login(LoginDto loginDto) {
         Authentication auth = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginDto.getEmail(), loginDto.getPassword()));
         SecurityContextHolder.getContext().setAuthentication(auth);
-        UserEntity user = userRepository.findByEmail(loginDto.getEmail()).orElseThrow(() -> new UserNotFoundException(loginDto.getEmail()));
-        if (passwordEncoder.matches(loginDto.getPassword(), user.getPassword())) {
-            return jwtUtils.generateJwtToken(loginDto.getEmail());
-        } else {
-            throw new CustomJwtException("Jwt token was not generated");
-        }
+        return jwtUtils.generateJwtToken(loginDto.getEmail());
     }
 
     public void logout() {

@@ -43,13 +43,13 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
-    @ExceptionHandler(WarningDeadlineException.class)
-    public ResponseEntity<String> handleWarningDeadlineException(WarningDeadlineException exception) {
+    @ExceptionHandler(DeadlineException.class)
+    public ResponseEntity<String> handleDeadlineException(DeadlineException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 
     @ExceptionHandler(AlreadyAssigneeException.class)
-    public ResponseEntity<String> handleAlreadyAssigneeException(AlreadyAssigneeException exception){
+    public ResponseEntity<String> handleAlreadyAssigneeException(AlreadyAssigneeException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
 }

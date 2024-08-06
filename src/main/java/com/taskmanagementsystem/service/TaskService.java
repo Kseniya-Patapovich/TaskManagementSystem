@@ -5,7 +5,7 @@ import com.taskmanagementsystem.exception.TaskNotFoundException;
 import com.taskmanagementsystem.exception.UnauthorizedTaskAccessException;
 import com.taskmanagementsystem.exception.UserIsNotAuthorException;
 import com.taskmanagementsystem.exception.UserNotFoundException;
-import com.taskmanagementsystem.exception.WarningDeadlineException;
+import com.taskmanagementsystem.exception.DeadlineException;
 import com.taskmanagementsystem.model.Task;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.model.dto.TaskCreateDto;
@@ -68,7 +68,7 @@ public class TaskService {
             throw new UserNotFoundException(taskCreateDto.getAssigneeId());
         }
         if (taskCreateDto.getDeadline().isBefore(LocalDate.now())) {
-            throw new WarningDeadlineException(taskCreateDto.getDeadline());
+            throw new DeadlineException(taskCreateDto.getDeadline());
         }
         task.setTitle(taskCreateDto.getTitle());
         task.setDescription(taskCreateDto.getDescription());

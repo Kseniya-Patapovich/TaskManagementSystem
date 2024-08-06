@@ -42,7 +42,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    @ResponseStatus(HttpStatus.CREATED)
+    @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "User login", description = "User authorization in the system")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "The user has successfully logged in"),
