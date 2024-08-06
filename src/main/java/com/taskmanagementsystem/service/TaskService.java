@@ -1,5 +1,6 @@
 package com.taskmanagementsystem.service;
 
+import com.taskmanagementsystem.exception.AlreadyAssigneeException;
 import com.taskmanagementsystem.exception.TaskNotFoundException;
 import com.taskmanagementsystem.exception.UnauthorizedTaskAccessException;
 import com.taskmanagementsystem.exception.UserIsNotAuthorException;
@@ -34,10 +35,6 @@ public class TaskService {
     public List<Task> getAllTasks(Pageable paging) {
         Page<Task> page = taskRepository.findAll(paging);
         return page.getContent();
-    }
-
-    public Task getTaskById(long id) {
-        return taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
     }
 
     public Task getTaskByTitle(String title) {
@@ -87,13 +84,17 @@ public class TaskService {
     @Transactional
     public void assignTaskToUser(long taskId, long userId) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
-        UserEntity user = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        if (task.getAuthor() != null && task.getAuthor().equals(userRepository.findByEmail(currentUserEmail).get())) {
-            task.getAssignees().add(user);
+        UserEntity assignee = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
+        if (task.getAssignees().contains(assignee)) {
+            throw new AlreadyAssigneeException(userId);
+        }
+        CustomUserDetail userDetail = userUtils.getCurrentUser();
+        UserEntity author = userService.getUserById(userDetail.getId());
+        if (task.getAuthor() != null && task.getAuthor().equals(author)) {
+            task.getAssignees().add(assignee);
             taskRepository.save(task);
         } else {
-            throw new UserIsNotAuthorException(currentUserEmail);
+            throw new UserIsNotAuthorException(userDetail.getUsername());
         }
     }
 
@@ -101,7 +102,7 @@ public class TaskService {
     public void changeStatus(long id, Status status) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
         String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity currentUser = userRepository.findByEmail(currentUserEmail).orElseThrow(() -> new UserNotFoundException(currentUserEmail));
+        UserEntity currentUser = userRepository.findByEmail(currentUserEmail).get();
         if (task.getAssignees().contains(currentUser)) {
             task.setStatus(status);
             taskRepository.save(task);

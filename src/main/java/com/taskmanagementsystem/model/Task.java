@@ -19,8 +19,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
-import jakarta.validation.constraints.FutureOrPresent;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -37,18 +35,15 @@ public class Task {
     private Long id;
 
     @Column
-    @Size(min = 5, max = 20)
     private String title;
 
     @Column
-    @Size(min = 1)
-    private String description;
+   private String description;
 
     @Column
     private LocalDate createdDate = LocalDate.now();
 
-    @FutureOrPresent
-    @Column
+   @Column
     private LocalDate deadline;
 
     @Column
@@ -68,9 +63,9 @@ public class Task {
 
     @ManyToMany
     @JoinTable(
-            name = "assignee_to_task",
+            name = "user_assigned_task",
             joinColumns = @JoinColumn(name = "task_id"),
-            inverseJoinColumns = @JoinColumn(name = "assignee_id"))
+            inverseJoinColumns = @JoinColumn(name = "user_id"))
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")
     @JsonIdentityReference(alwaysAsId = true)
     @JsonDeserialize

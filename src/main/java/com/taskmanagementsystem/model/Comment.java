@@ -28,9 +28,8 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(min = 1)
     @Column
-    private String text;
+    private String content;
 
     @Column
     private LocalDate createdDate = LocalDate.now();

@@ -41,7 +41,7 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @GetMapping("/{id}")
+    @GetMapping("/id/{id}")
     @Operation(summary = "Get user by ID", description = "Returns user by ID, if such exist")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully response"),
@@ -52,7 +52,7 @@ public class UserController {
         return userService.getUserById(id);
     }
 
-    @GetMapping("/{email}")
+    @GetMapping("/email/{email}")
     @Operation(summary = "Gets user by email", description = "Returns user by email, if such exist")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Successfully response"),

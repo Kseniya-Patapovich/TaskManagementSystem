@@ -31,13 +31,13 @@ public class CommentService {
     @Transactional
     public Long addComment(long taskId, String content) {
         Comment comment = new Comment();
-        CustomUserDetail currentUserDetail = userUtils.getCurrentUser();
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
-        UserEntity author = userRepository.findById(currentUserDetail.getId()).orElseThrow(() -> new UserNotFoundException(currentUserDetail.getId()));
+        CustomUserDetail currentUserDetail = userUtils.getCurrentUser();
+        UserEntity author = userRepository.findById(currentUserDetail.getId()).get();
         comment.setCreatedDate(LocalDate.now());
         comment.setAuthor(author);
         comment.setTask(task);
-        comment.setText(content);
+        comment.setContent(content);
         commentRepository.save(comment);
         return comment.getId();
     }
@@ -53,7 +53,7 @@ public class CommentService {
     @Transactional
     public void changeComment(long id, String content) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException(id));
-        comment.setText(content);
+        comment.setContent(content);
         commentRepository.save(comment);
     }
 

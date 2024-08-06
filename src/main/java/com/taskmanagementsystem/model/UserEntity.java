@@ -18,7 +18,6 @@ import jakarta.persistence.ManyToMany;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.util.List;
@@ -32,7 +31,6 @@ public class UserEntity {
     private Long id;
 
     @Column(nullable = false)
-    @Size(min = 7, max = 15)
     private String username;
 
     @Column(unique = true)
@@ -40,7 +38,6 @@ public class UserEntity {
     private String email;
 
     @Column(nullable = false)
-    @Size(min = 8, max = 32)
     private String password;
 
     @Column(nullable = false)
