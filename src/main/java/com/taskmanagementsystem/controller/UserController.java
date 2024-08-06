@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import lombok.RequiredArgsConstructor;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -81,7 +82,7 @@ public class UserController {
     public void updatePassword(
             @PathVariable Long id,
             @RequestBody
-            @Valid
+            @Valid @Length(min = 8, max = 32)
             @Parameter(description = "New user password", required = true) String password) {
         userService.updatePassword(id, password);
     }
@@ -98,7 +99,7 @@ public class UserController {
     public void updateUsername(
             @PathVariable Long id,
             @RequestBody
-            @Valid
+            @Valid @Length(min = 7, max = 15)
             @Parameter(description = "New username", required = true) String username) {
         userService.updateUsername(id, username);
     }
