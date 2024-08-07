@@ -47,9 +47,4 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDeadlineException(DeadlineException exception) {
         return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
     }
-
-    @ExceptionHandler(AlreadyAssigneeException.class)
-    public ResponseEntity<String> handleAlreadyAssigneeException(AlreadyAssigneeException exception) {
-        return new ResponseEntity<>(exception.getMessage(), HttpStatus.CONFLICT);
-    }
 }

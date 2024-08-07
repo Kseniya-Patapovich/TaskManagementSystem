@@ -51,7 +51,7 @@ public class TaskController {
     @GetMapping("/by_author")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get tasks by author", description = "Returns a paginated list of tasks created by the specified author.")
-    public List<Task> getTaskByAuthor(
+    public List<Task> getTasksByAuthor(
             @RequestParam @Parameter(description = "Author ID", required = true) long authorId,
             @RequestParam @Parameter(description = "Page number", example = "0", required = true) int page,
             @RequestParam @Parameter(description = "Number of tasks per page", example = "10", required = true) int limit) {
@@ -61,7 +61,7 @@ public class TaskController {
     @GetMapping("/by_assignee")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get tasks by assignee", description = "Returns a paginated list of tasks assigned to the specified user.")
-    public List<Task> getTaskByAssignee(
+    public List<Task> getTasksByAssignee(
             @RequestParam @Parameter(description = "Assignee ID", required = true) long assigneeId,
             @RequestParam @Parameter(description = "Page number", example = "0", required = true) int page,
             @RequestParam @Parameter(description = "Number of tasks per page", example = "10", required = true) int limit) {
@@ -78,19 +78,19 @@ public class TaskController {
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Assign a user to a task", description = "Assigns a user to an existing task.")
-    public void assignUserToTask(
+    public void editAssignee(
             @RequestParam @Parameter(description = "Task ID", required = true) long taskId,
             @RequestParam @Parameter(description = "Assignee ID", required = true) long assigneeId) {
-        taskService.assignTaskToUser(taskId, assigneeId);
+        taskService.editAssignee(taskId, assigneeId);
     }
 
     @PutMapping("/status/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Change task status", description = "Changes the status of a task.")
-    public void changeStatus(
+    public void editStatus(
             @PathVariable @Parameter(description = "Task ID", required = true) long id,
             @RequestBody @Parameter(description = "New status", required = true) Status status) {
-        taskService.changeStatus(id, status);
+        taskService.editStatus(id, status);
     }
 
     @DeleteMapping("/{id}")
@@ -103,9 +103,9 @@ public class TaskController {
     @PutMapping("/priority/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update task's priority", description = "Update task's priority by its id")
-    public void updatePriority(
+    public void editPriority(
             @PathVariable @Parameter(description = "task ID", required = true) long id,
             @RequestBody @Parameter(description = "Priority") Priority priority){
-        taskService.changePriority(id, priority);
+        taskService.editPriority(id, priority);
     }
 }

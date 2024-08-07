@@ -49,10 +49,10 @@ public class CommentController {
     @PutMapping
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update a comment", description = "Updates the content of an existing comment.")
-    public void changeComment(
+    public void editComment(
             @RequestParam @Parameter(description = "Comment ID", required = true) long id,
             @RequestBody @Parameter(description = "Updated content of the comment", required = true) String content) {
-        commentService.changeComment(id, content);
+        commentService.editComment(id, content);
     }
 
     @DeleteMapping

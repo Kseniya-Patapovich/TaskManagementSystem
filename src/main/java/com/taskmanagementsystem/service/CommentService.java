@@ -2,6 +2,7 @@ package com.taskmanagementsystem.service;
 
 import com.taskmanagementsystem.exception.CommentNotFoundException;
 import com.taskmanagementsystem.exception.TaskNotFoundException;
+import com.taskmanagementsystem.exception.UserIsNotAuthorException;
 import com.taskmanagementsystem.model.Comment;
 import com.taskmanagementsystem.model.Task;
 import com.taskmanagementsystem.model.UserEntity;
@@ -49,16 +50,26 @@ public class CommentService {
     }
 
     @Transactional
-    public void changeComment(long id, String content) {
+    public void editComment(long id, String content) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException(id));
-        comment.setContent(content);
-        commentRepository.save(comment);
+        UserDetails userDetails = userUtils.getCurrentUser();
+        UserEntity author = userService.getUserByEmail(userDetails.getUsername());
+        if (comment.getAuthor().equals(author)) {
+            comment.setContent(content);
+            commentRepository.save(comment);
+        } else {
+            throw new UserIsNotAuthorException(author.getUsername());
+        }
     }
 
     public void deleteComment(long id) {
-        if (!commentRepository.existsById(id)) {
-            throw new CommentNotFoundException(id);
+        Comment commentToDelete = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException(id));
+        UserDetails userDetails = userUtils.getCurrentUser();
+        UserEntity author = userService.getUserByEmail(userDetails.getUsername());
+        if (commentToDelete.getAuthor().equals(author)) {
+            commentRepository.deleteById(id);
+        } else {
+            throw new UserIsNotAuthorException(author.getUsername());
         }
-        commentRepository.deleteById(id);
     }
 }
