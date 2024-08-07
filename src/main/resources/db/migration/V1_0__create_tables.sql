@@ -2,8 +2,7 @@ CREATE TABLE IF NOT EXISTS users(
     id bigserial PRIMARY KEY,
     username VARCHAR(100) NOT NULL,
     email VARCHAR(150) UNIQUE,
-    password VARCHAR(150) NOT NULL,
-    role VARCHAR(100) NOT NULL
+    password VARCHAR(150) NOT NULL
 );
 
 CREATE TABLE IF NOT EXISTS tasks(
@@ -34,6 +33,3 @@ CREATE TABLE IF NOT EXISTS user_assigned_task(
     FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
     FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
-
-INSERT INTO users(username, email, password, role)
-VALUES ('Kseniya Admin', 'admin@mail.com', '$2a$10$iJYi9Sd8P3CJzSUZqr9Lq.5lxoQvWlVEsB9hlFMGXWeTuQiT2.b.S', 'ADMIN');

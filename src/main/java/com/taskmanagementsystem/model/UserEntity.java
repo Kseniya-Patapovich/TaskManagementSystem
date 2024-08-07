@@ -40,9 +40,9 @@ public class UserEntity {
     @Column(nullable = false)
     private String password;
 
-    @Column(nullable = false)
+   /* @Column(nullable = false)
     @Enumerated(EnumType.STRING)
-    private Role role;
+    private Role role;*/
 
     @OneToMany(mappedBy = "author")
     @JsonIdentityInfo(generator = ObjectIdGenerators.PropertyGenerator.class, property = "id")

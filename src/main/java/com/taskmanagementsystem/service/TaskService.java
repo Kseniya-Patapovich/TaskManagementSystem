@@ -9,15 +9,16 @@ import com.taskmanagementsystem.exception.DeadlineException;
 import com.taskmanagementsystem.model.Task;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.model.dto.TaskCreateDto;
+import com.taskmanagementsystem.model.enums.Priority;
 import com.taskmanagementsystem.model.enums.Status;
 import com.taskmanagementsystem.repository.TaskRepository;
 import com.taskmanagementsystem.repository.UserRepository;
-import com.taskmanagementsystem.security.CustomUserDetail;
 import com.taskmanagementsystem.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,9 +61,9 @@ public class TaskService {
     @Transactional
     public Long createTask(TaskCreateDto taskCreateDto) {
         Task task = new Task();
-        CustomUserDetail userDetail = userUtils.getCurrentUser();
-        if (!userRepository.existsById(userDetail.getId())) {
-            throw new UserNotFoundException(userDetail.getId());
+        UserDetails userDetail = userUtils.getCurrentUser();
+        if (!userRepository.existsByEmail(userDetail.getUsername())) {
+            throw new UserNotFoundException(userDetail.getUsername());
         }
         if (!userRepository.existsById(taskCreateDto.getAssigneeId())) {
             throw new UserNotFoundException(taskCreateDto.getAssigneeId());
@@ -75,8 +76,8 @@ public class TaskService {
         task.setDeadline(taskCreateDto.getDeadline());
         task.setPriority(taskCreateDto.getPriority());
         task.setStatus(Status.PENDING);
-        task.setAuthor(userService.getUserById(userDetail.getId()));
-        task.getAssignees().add(userService.getUserById(taskCreateDto.getAssigneeId()));
+        task.setAuthor(userService.getUserByEmail(userDetail.getUsername()));
+        task.getAssignees().add(userRepository.findById(taskCreateDto.getAssigneeId()).get());
         taskRepository.save(task);
         return task.getId();
     }
@@ -88,8 +89,8 @@ public class TaskService {
         if (task.getAssignees().contains(assignee)) {
             throw new AlreadyAssigneeException(userId);
         }
-        CustomUserDetail userDetail = userUtils.getCurrentUser();
-        UserEntity author = userService.getUserById(userDetail.getId());
+        UserDetails userDetail = userUtils.getCurrentUser();
+        UserEntity author = userService.getUserByEmail(userDetail.getUsername());
         if (task.getAuthor() != null && task.getAuthor().equals(author)) {
             task.getAssignees().add(assignee);
             taskRepository.save(task);
@@ -108,6 +109,18 @@ public class TaskService {
             taskRepository.save(task);
         } else {
             throw new UnauthorizedTaskAccessException(currentUserEmail);
+        }
+    }
+
+    @Transactional
+    public void changePriority(long id, Priority priority) {
+        Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
+        UserEntity user = userService.getUserByEmail(userUtils.getCurrentUser().getUsername());
+        if (task.getAuthor().equals(user)) {
+            task.setPriority(priority);
+            taskRepository.save(task);
+        } else {
+            throw new UserIsNotAuthorException(user.getEmail());
         }
     }
 

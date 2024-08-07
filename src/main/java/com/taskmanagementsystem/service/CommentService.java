@@ -2,18 +2,16 @@ package com.taskmanagementsystem.service;
 
 import com.taskmanagementsystem.exception.CommentNotFoundException;
 import com.taskmanagementsystem.exception.TaskNotFoundException;
-import com.taskmanagementsystem.exception.UserNotFoundException;
 import com.taskmanagementsystem.model.Comment;
 import com.taskmanagementsystem.model.Task;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.repository.CommentRepository;
 import com.taskmanagementsystem.repository.TaskRepository;
-import com.taskmanagementsystem.repository.UserRepository;
-import com.taskmanagementsystem.security.CustomUserDetail;
 import com.taskmanagementsystem.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,15 +23,15 @@ import java.util.List;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final TaskRepository taskRepository;
-    private final UserRepository userRepository;
     private final UserUtils userUtils;
+    private final UserService userService;
 
     @Transactional
     public Long addComment(long taskId, String content) {
         Comment comment = new Comment();
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
-        CustomUserDetail currentUserDetail = userUtils.getCurrentUser();
-        UserEntity author = userRepository.findById(currentUserDetail.getId()).get();
+        UserDetails currentUserDetail = userUtils.getCurrentUser();
+        UserEntity author = userService.getUserByEmail(currentUserDetail.getUsername());
         comment.setCreatedDate(LocalDate.now());
         comment.setAuthor(author);
         comment.setTask(task);

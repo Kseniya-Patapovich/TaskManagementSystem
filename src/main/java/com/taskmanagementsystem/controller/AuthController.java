@@ -5,10 +5,7 @@ import com.taskmanagementsystem.model.dto.UserCreateDto;
 import com.taskmanagementsystem.service.AuthService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -29,10 +26,6 @@ public class AuthController {
     @PostMapping("/registration")
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "User registration", description = "Creating a new user in the system")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "201", description = "The user has been successfully registered"),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content)
-    })
     public void registration(
             @RequestBody
             @Valid
@@ -44,11 +37,6 @@ public class AuthController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "User login", description = "User authorization in the system")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The user has successfully logged in"),
-            @ApiResponse(responseCode = "400", description = "Invalid request data", content = @Content),
-            @ApiResponse(responseCode = "401", description = "Invalid email or password", content = @Content)
-    })
     public String login(
             @RequestBody
             @Valid
@@ -60,9 +48,6 @@ public class AuthController {
     @PostMapping("/logout")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "User logout", description = "Termination of the user's session in the system")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "The user has successfully logged out")
-    })
     public void logout() {
         authService.logout();
     }

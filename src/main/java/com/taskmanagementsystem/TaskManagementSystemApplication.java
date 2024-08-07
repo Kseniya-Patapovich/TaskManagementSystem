@@ -8,11 +8,11 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @OpenAPIDefinition(info = @Info(
-        title = "TeachMeSkills_Application",
-        description = "Learn Spring Boot",
-        contact = @Contact(name = "dimkaaaa",
-                url = "dimka.by",
-                email = "meme@mail.com")
+        title = "Task Management System",
+        description = "API for task management",
+        contact = @Contact(name = "Kseniya",
+                url = "https://github.com/Kseniya-Patapovich",
+                email = "ksyu.potapovich@bk.ru")
 ),
         security = @SecurityRequirement(name = "Bearer Authentication")
 )
