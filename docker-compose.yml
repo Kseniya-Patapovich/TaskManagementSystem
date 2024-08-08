@@ -12,8 +12,8 @@ services:
     volumes:
       - data:/var/lib/postgresql/data
     restart: unless-stopped
-  app:
-    container_name: taskmanagementsystem
+  tms:
+    container_name: task_management_system
     ports:
       - "8080:8080"
     depends_on:
@@ -22,6 +22,6 @@ services:
       dockerfile: .\Dockerfile
     restart: unless-stopped
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://localhost:5432/task_management_system
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db/task_management_system
 volumes:
   data:
