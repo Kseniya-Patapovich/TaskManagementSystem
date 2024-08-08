@@ -1,6 +1,5 @@
 package com.taskmanagementsystem.service;
 
-import com.taskmanagementsystem.exception.CommentNotFoundException;
 import com.taskmanagementsystem.exception.TaskNotFoundException;
 import com.taskmanagementsystem.exception.UserIsNotAuthorException;
 import com.taskmanagementsystem.model.Comment;
@@ -8,8 +7,7 @@ import com.taskmanagementsystem.model.Task;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.repository.CommentRepository;
 import com.taskmanagementsystem.repository.TaskRepository;
-import com.taskmanagementsystem.service.CommentService;
-import com.taskmanagementsystem.service.UserService;
+import com.taskmanagementsystem.security.UserEntityDetails;
 import com.taskmanagementsystem.utils.UserUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,13 +18,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collections;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class CommentServiceTest {
@@ -81,7 +82,7 @@ public class CommentServiceTest {
     @Test
     void testEditComment_Success() {
         when(commentRepository.findById(1L)).thenReturn(Optional.of(comment));
-        UserDetails userDetails = mock(UserDetails.class);
+        UserEntityDetails userDetails = mock(UserEntityDetails.class);
         when(userDetails.getUsername()).thenReturn(author.getEmail());
         when(userUtils.getCurrentUser()).thenReturn(userDetails);
         when(userService.getUserByEmail(author.getEmail())).thenReturn(author);
@@ -92,12 +93,12 @@ public class CommentServiceTest {
     }
 
     @Test
-    void testEditComment_Unauthorized() {
+    void testEditComment_UserIsNotAuthor() {
         UserEntity otherUser = new UserEntity();
         otherUser.setEmail("other@example.com");
 
         when(commentRepository.findById(1L)).thenReturn(Optional.of(comment));
-        UserDetails userDetails = mock(UserDetails.class);
+        UserEntityDetails userDetails = mock(UserEntityDetails.class);
         when(userDetails.getUsername()).thenReturn(otherUser.getEmail());
         when(userUtils.getCurrentUser()).thenReturn(userDetails);
         when(userService.getUserByEmail(otherUser.getEmail())).thenReturn(otherUser);
@@ -108,7 +109,7 @@ public class CommentServiceTest {
     @Test
     void testDeleteComment_Success() {
         when(commentRepository.findById(1L)).thenReturn(Optional.of(comment));
-        UserDetails userDetails = mock(UserDetails.class);
+        UserEntityDetails userDetails = mock(UserEntityDetails.class);
         when(userDetails.getUsername()).thenReturn(author.getEmail());
         when(userUtils.getCurrentUser()).thenReturn(userDetails);
         when(userService.getUserByEmail(author.getEmail())).thenReturn(author);
@@ -118,12 +119,12 @@ public class CommentServiceTest {
     }
 
     @Test
-    void testDeleteComment_Unauthorized() {
+    void testDeleteComment_UserIsNotAuthor() {
         UserEntity otherUser = new UserEntity();
         otherUser.setEmail("other@example.com");
 
         when(commentRepository.findById(1L)).thenReturn(Optional.of(comment));
-        UserDetails userDetails = mock(UserDetails.class);
+        UserEntityDetails userDetails = mock(UserEntityDetails.class);
         when(userDetails.getUsername()).thenReturn(otherUser.getEmail());
         when(userUtils.getCurrentUser()).thenReturn(userDetails);
         when(userService.getUserByEmail(otherUser.getEmail())).thenReturn(otherUser);

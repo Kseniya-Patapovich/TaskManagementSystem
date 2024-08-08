@@ -8,6 +8,7 @@ import com.taskmanagementsystem.model.Task;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.repository.CommentRepository;
 import com.taskmanagementsystem.repository.TaskRepository;
+import com.taskmanagementsystem.security.UserEntityDetails;
 import com.taskmanagementsystem.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -52,24 +53,22 @@ public class CommentService {
     @Transactional
     public void editComment(long id, String content) {
         Comment comment = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException(id));
-        UserDetails userDetails = userUtils.getCurrentUser();
-        UserEntity author = userService.getUserByEmail(userDetails.getUsername());
-        if (comment.getAuthor().equals(author)) {
+        UserEntityDetails userEntityDetails = userUtils.getCurrentUser();
+        if (comment.getAuthor().getId().equals(userEntityDetails.getId())) {
             comment.setContent(content);
             commentRepository.save(comment);
         } else {
-            throw new UserIsNotAuthorException(author.getUsername());
+            throw new UserIsNotAuthorException(userEntityDetails.getUsername());
         }
     }
 
     public void deleteComment(long id) {
         Comment commentToDelete = commentRepository.findById(id).orElseThrow(() -> new CommentNotFoundException(id));
-        UserDetails userDetails = userUtils.getCurrentUser();
-        UserEntity author = userService.getUserByEmail(userDetails.getUsername());
-        if (commentToDelete.getAuthor().equals(author)) {
+        UserEntityDetails userEntityDetails = userUtils.getCurrentUser();
+        if (commentToDelete.getAuthor().getId().equals(userEntityDetails.getId())) {
             commentRepository.deleteById(id);
         } else {
-            throw new UserIsNotAuthorException(author.getUsername());
+            throw new UserIsNotAuthorException(userEntityDetails.getUsername());
         }
     }
 }

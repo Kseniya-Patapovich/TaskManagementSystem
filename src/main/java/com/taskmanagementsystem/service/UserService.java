@@ -20,12 +20,4 @@ public class UserService {
     public UserEntity getUserByEmail(String email) {
         return userRepository.findByEmail(email).orElseThrow(() -> new UserNotFoundException(email));
     }
-
-    public void deleteUser(Long id) {
-        if (userRepository.existsById(id)){
-            userRepository.deleteById(id);
-        } else {
-            throw new UserNotFoundException(id);
-        }
-    }
 }

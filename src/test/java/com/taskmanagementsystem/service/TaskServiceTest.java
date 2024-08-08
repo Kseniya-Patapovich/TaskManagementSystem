@@ -6,6 +6,7 @@ import com.taskmanagementsystem.model.Task;
 import com.taskmanagementsystem.model.UserEntity;
 import com.taskmanagementsystem.repository.TaskRepository;
 import com.taskmanagementsystem.repository.UserRepository;
+import com.taskmanagementsystem.security.UserEntityDetails;
 import com.taskmanagementsystem.utils.UserUtils;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Arrays;
 import java.util.List;
@@ -137,7 +137,7 @@ public class TaskServiceTest {
         UserEntity assignee = new UserEntity();
         assignee.setId(2L);
 
-        UserDetails userDetails = mock(UserDetails.class);
+        UserEntityDetails userDetails = mock(UserEntityDetails.class);
         when(userDetails.getUsername()).thenReturn("author@example.com");
         when(userUtils.getCurrentUser()).thenReturn(userDetails);
         when(userService.getUserByEmail(anyString())).thenReturn(author);

@@ -12,12 +12,11 @@ import com.taskmanagementsystem.model.enums.Priority;
 import com.taskmanagementsystem.model.enums.Status;
 import com.taskmanagementsystem.repository.TaskRepository;
 import com.taskmanagementsystem.repository.UserRepository;
+import com.taskmanagementsystem.security.UserEntityDetails;
 import com.taskmanagementsystem.utils.UserUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,7 +59,7 @@ public class TaskService {
     @Transactional
     public Long createTask(TaskCreateDto taskCreateDto) {
         Task task = new Task();
-        UserDetails userDetail = userUtils.getCurrentUser();
+        UserEntityDetails userDetail = userUtils.getCurrentUser();
         if (!userRepository.existsByEmail(userDetail.getUsername())) {
             throw new UserNotFoundException(userDetail.getUsername());
         }
@@ -85,9 +84,8 @@ public class TaskService {
     public void editAssignee(long taskId, long userId) {
         Task task = taskRepository.findById(taskId).orElseThrow(() -> new TaskNotFoundException(taskId));
         UserEntity assignee = userRepository.findById(userId).orElseThrow(() -> new UserNotFoundException(userId));
-        UserDetails userDetail = userUtils.getCurrentUser();
-        UserEntity author = userService.getUserByEmail(userDetail.getUsername());
-        if (task.getAuthor() != null && task.getAuthor().equals(author)) {
+        UserEntityDetails userDetail = userUtils.getCurrentUser();
+        if (task.getAuthor() != null && task.getAuthor().getId().equals(userDetail.getId())) {
             task.setAssignee(assignee);
             taskRepository.save(task);
         } else {
@@ -98,36 +96,34 @@ public class TaskService {
     @Transactional
     public void editStatus(long id, Status status) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        String currentUserEmail = SecurityContextHolder.getContext().getAuthentication().getName();
-        UserEntity currentUser = userRepository.findByEmail(currentUserEmail).get();
-        if (task.getAssignee().equals(currentUser)) {
+        UserEntityDetails userEntityDetails = userUtils.getCurrentUser();
+        if (task.getAssignee().getId().equals(userEntityDetails.getId())) {
             task.setStatus(status);
             taskRepository.save(task);
         } else {
-            throw new UnauthorizedTaskAccessException(currentUserEmail);
+            throw new UnauthorizedTaskAccessException(userEntityDetails.getUsername());
         }
     }
 
     @Transactional
     public void editPriority(long id, Priority priority) {
         Task task = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        UserEntity user = userService.getUserByEmail(userUtils.getCurrentUser().getUsername());
-        if (task.getAuthor().equals(user)) {
+        UserEntityDetails userEntityDetails = userUtils.getCurrentUser();
+        if (task.getAuthor().getId().equals(userEntityDetails.getId())) {
             task.setPriority(priority);
             taskRepository.save(task);
         } else {
-            throw new UserIsNotAuthorException(user.getUsername());
+            throw new UserIsNotAuthorException(userEntityDetails.getUsername());
         }
     }
 
     public void deleteTask(long id) {
         Task taskToDelete = taskRepository.findById(id).orElseThrow(() -> new TaskNotFoundException(id));
-        UserDetails currentUser = userUtils.getCurrentUser();
-        UserEntity author = userService.getUserByEmail(currentUser.getUsername());
-        if (taskToDelete.getAuthor().equals(author)) {
+        UserEntityDetails userEntityDetails = userUtils.getCurrentUser();
+        if (taskToDelete.getAuthor().getId().equals(userEntityDetails.getId())) {
             taskRepository.deleteById(id);
         } else {
-            throw new UserIsNotAuthorException(author.getUsername());
+            throw new UserIsNotAuthorException(userEntityDetails.getUsername());
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.taskmanagementsystem.security;
 
-import com.taskmanagementsystem.model.enums.Role;
+import com.taskmanagementsystem.service.CustomUserDetailService;
 import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import lombok.RequiredArgsConstructor;
