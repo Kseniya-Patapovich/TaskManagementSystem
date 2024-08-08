@@ -14,13 +14,11 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -92,12 +90,5 @@ public class AuthServiceTest {
 
         assertEquals("jwtToken", token);
         verify(authenticationManager, times(1)).authenticate(any(UsernamePasswordAuthenticationToken.class));
-    }
-
-    @Test
-    public void testLogout() {
-        SecurityContextHolder.getContext().setAuthentication(mock(Authentication.class));
-        authService.logout();
-        assertNull(SecurityContextHolder.getContext().getAuthentication());
     }
 }

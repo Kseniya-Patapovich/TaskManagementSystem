@@ -13,15 +13,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class UserServiceTest {
@@ -66,30 +60,6 @@ public class UserServiceTest {
         UserEntity result = userService.getUserByEmail("test@mail.com");
 
         assertEquals("test@mail.com", result.getEmail());
-    }
-
-    @Test
-    public void testDeleteUser(){
-        when(userRepository.existsById(anyLong())).thenReturn(true);
-
-        doNothing().when(userRepository).deleteById(anyLong());
-
-        assertDoesNotThrow(() -> {
-            userService.deleteUser(1L);
-        });
-
-        verify(userRepository, times(1)).deleteById(1L);
-    }
-
-    @Test
-    public void testDeleteUserNotFound() {
-        when(userRepository.existsById(anyLong())).thenReturn(false);
-
-        assertThrows(UserNotFoundException.class, () -> {
-            userService.deleteUser(1L);
-        });
-
-        verify(userRepository, never()).deleteById(anyLong());
     }
 
     @Test

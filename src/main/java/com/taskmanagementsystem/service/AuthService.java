@@ -43,8 +43,4 @@ public class AuthService {
         SecurityContextHolder.getContext().setAuthentication(auth);
         return jwtUtils.generateJwtToken(loginDto.getEmail());
     }
-
-    public void logout() {
-        SecurityContextHolder.clearContext();
-    }
 }

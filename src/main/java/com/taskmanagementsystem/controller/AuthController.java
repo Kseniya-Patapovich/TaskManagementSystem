@@ -44,11 +44,4 @@ public class AuthController {
             LoginDto loginDto) {
         return authService.login(loginDto);
     }
-
-    @PostMapping("/logout")
-    @ResponseStatus(HttpStatus.OK)
-    @Operation(summary = "User logout", description = "Termination of the user's session in the system")
-    public void logout() {
-        authService.logout();
-    }
 }
